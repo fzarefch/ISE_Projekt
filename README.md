@@ -11,8 +11,8 @@ cd ISE_Project
 
 2️⃣ Virtuelle Umgebung erstellen (Empfohlen)
 
-python -m venv venv  # Windows
-source venv/bin/activate  # macOS/Linux
+python -m venv venv  # Windows,
+source venv/bin/activate  # macOS/Linux,
 venv\Scripts\activate  # Windows (PowerShell)
 
 3️⃣ Abhängigkeiten installieren
