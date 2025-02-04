@@ -1,0 +1,26 @@
+database:
+  location: "restaurant_data_combined.sqlite"
+  url: "sqlite:///Users/E531/PycharmProjects/ISEProjekt/restaurant_data_combined.sqlite"
+
+csv_file:
+  location: "RestaurantInspectionViolations.csv"
+
+queries:
+  create_table: CREATE TABLE IF NOT EXISTS Inspection_Data (
+                record_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name VARCHAR(100) NOT NULL,
+                street_address VARCHAR(100) NOT NULL,
+                city VARCHAR(100) NOT NULL,
+                zipcode INTEGER(10) NOT NULL,
+                geocoded_location VARCHAR(100),
+                inspection_date DATE NOT NULL,
+                inspection_type VARCHAR(50),
+                violation_code VARCHAR(10),
+                violation_description VARCHAR(100)
+                );
+
+  insert_data: INSERT INTO Inspection_Data (
+               name, street_address, city, zipcode, geocoded_location,
+               inspection_date, inspection_type, violation_code, violation_description
+               )
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
