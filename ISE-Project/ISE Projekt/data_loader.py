@@ -6,6 +6,8 @@ import streamlit as st
 from sqlalchemy import create_engine
 from typing import Optional
 
+from dataframe import Dataframe
+
 
 class DataLoader:
     """
@@ -33,9 +35,12 @@ class DataLoader:
         geladen, transformiert und als Parquet gespeichert.
         """
         cache_file = "cached_inspection_data.parquet"
+
+        df = Dataframe(cache_file)
+
         if os.path.exists(cache_file):
             st.write("Lade Daten aus dem Parquet-Cache...")
-            df = pd.read_parquet(cache_file)
+            df.read_parquet()
         else:
             st.write("Lade Daten aus der SQLite-Datenbank...")
             query = """
@@ -50,7 +55,7 @@ class DataLoader:
                 violation_code
             FROM Inspection_Data
             """
-            df = pd.read_sql(query, con=self.engine)
+            df.read_sql(query, self.engine)
 
             def parse_loc(loc: str) -> tuple[float, float]:
                 if not isinstance(loc, str):
@@ -66,13 +71,13 @@ class DataLoader:
                 except Exception:
                     return None, None
 
-            df['parsed'] = df['geocoded_location'].apply(parse_loc)
-            df[['latitude', 'longitude']] = pd.DataFrame(df['parsed'].tolist(), index=df.index)
-            df['inspection_date'] = pd.to_datetime(df['inspection_date'])
-            df = df.drop(columns=['parsed'])
-            df = df.dropna(subset=['latitude', 'longitude'])
+            df.data['parsed'] = df.data['geocoded_location'].apply(parse_loc)
+            df.data[['latitude', 'longitude']] = pd.DataFrame(df.data['parsed'].tolist(), index=df.data.index)
+            df.data['inspection_date'] = pd.to_datetime(df.data['inspection_date'])
+            df.data.drop(columns=['parsed'])
+            df.data.dropna(subset=['latitude', 'longitude'])
             # Entferne Zeilen, bei denen latitude und longitude 0 (oder nahezu 0) sind
             epsilon = 1e-6
-            df = df[(df['latitude'].abs() > epsilon) & (df['longitude'].abs() > epsilon)]
-            df.to_parquet(cache_file, index=False)
-        return df
+            df.data = df.data[(df.data['latitude'].abs() > epsilon) & (df.data['longitude'].abs() > epsilon)]
+            df.data.to_parquet(cache_file, index=False)
+        return df.data

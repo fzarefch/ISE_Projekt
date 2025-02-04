@@ -2,7 +2,6 @@ import pandas as pd
 
 
 class Dataframe:
-    file = None
     data = None
 
     def __init__(self, file):
@@ -13,3 +12,9 @@ class Dataframe:
 
     def load_data(self):
         self.data = pd.read_csv(self.file, sep=",")
+
+    def read_parquet(self):
+        self.data = pd.read_parquet(self.file)
+
+    def read_sql(self, query, engine):
+        self.data = pd.read_sql(query, con=engine)
