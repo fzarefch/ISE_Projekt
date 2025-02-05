@@ -1,16 +1,18 @@
 import sqlite3
 
+
 class Database:
-    db = None
+    conn = None
     cursor = None
 
     def __init__(self, name):
-        self.db = sqlite3.connect(name)
-        self.cursor = self.db.cursor()
+        self.name = name
 
-    def close(self):
-        self.db.commit()
-        self.db.close()
+    def __enter__(self):
+        self.conn = sqlite3.connect(self.name)
+        self.cursor = self.conn.cursor()
+        return self
 
-    def save_changes(self):
-        self.db.commit()
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.conn.commit()
+        self.conn.close()
